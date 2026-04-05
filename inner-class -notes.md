@@ -3581,3 +3581,646 @@ class B show method
 ```
 
 ---
+
+
+## 📌 Static Nested Class with Static Member
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    static class B {
+
+        static int x = 10;
+
+        public void show() {
+            System.out.println("x=" + x);
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A.B b1 = new A.B();
+        b1.show();
+    }
+}
+```
+
+---
+
+## 🖥️ Output
+
+```text
+x=10
+```
+
+---
+
+
+## 📌 Static Nested Class with Static Method
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    static class B {
+
+        public static void show() {
+            System.out.println("static method");
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A.B.show(); // calling static method
+    }
+}
+```
+
+---
+
+## 🖥️ Output
+
+```text
+static method
+```
+
+---
+
+
+## 📌 Static Nested Class with `main()` Method
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    static class B {
+
+        public static void main(String ar[]) {
+            System.out.println("static method");
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        // No code here
+    }
+}
+```
+
+---
+
+## 🖥️ Output (How to Run)
+
+### ▶ Run Outer Class
+
+```bash
+java demo
+```
+
+```text
+(no output)
+```
+
+---
+
+### ▶ Run Nested Class
+
+```bash
+java A$B
+```
+
+```text
+static method
+```
+
+---
+
+
+
+## 📌 Static Nested Class Accessing Outer Members (Error ❌)
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    int x = 10;
+    static int y = 20;
+
+    static class B {
+
+        public void show() {
+
+            System.out.println("x=" + x); // ❌ Error
+            System.out.println("y=" + y); // ✅ Allowed
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A.B b1 = new A.B();
+        b1.show();
+    }
+}
+```
+
+---
+
+## 💥 Error
+
+```text
+non-static variable x cannot be referenced from a static context
+```
+
+---
+
+## ❓ Why this error occurs?
+
+👉 `B` is a **static nested class**
+
+```java
+static class B
+```
+
+👉 So inside `B`:
+- ❌ Cannot access instance variable `x` directly  
+- ✅ Can access static variable `y`  
+
+---
+
+## 🔥 Important Rule
+
+> Static nested class can access only **static members of outer class directly**
+
+---
+
+## 🎯 Problem Line
+
+```java
+System.out.println("x=" + x); // ❌
+```
+
+👉 `x` is instance variable → needs object  
+
+---
+
+## ✅ Correct Solutions
+
+---
+
+### ✔️ Option 1: Create Object of Outer Class
+
+```java
+static class B {
+
+    public void show() {
+
+        A a = new A();
+
+        System.out.println("x=" + a.x); // ✅ fixed
+        System.out.println("y=" + y);
+    }
+}
+```
+
+---
+
+###  Option 2: Make `x` Static
+
+```java
+static int x = 10;
+```
+
+👉 Now directly accessible ✔️  
+
+---
+
+## ️ Correct Output
+
+```text
+x=10
+y=20
+```
+
+---
+
+
+
+## 📌 Interface Inside Class (Error Case ❌)
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    interface inter1 {
+
+        void show();
+    }
+
+    class B implements inter1 {
+
+        // ❌ No implementation
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A a = new A();
+        A.B b = a.new B();
+    }
+}
+```
+
+---
+
+## 💥 Error
+
+```text
+A.B is not abstract and does not override abstract method show() in inter1
+```
+
+---
+
+
+
+##  Interface Inside Class (Correct Usage ✅)
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    interface inter1 {
+
+        void show();
+    }
+
+    class B implements inter1 {
+
+        public void show() {
+            System.out.println("class B show method");
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A a = new A();
+
+        A.B b = a.new B(); // creating object of inner class
+        b.show();
+    }
+}
+```
+
+---
+
+##  Output
+
+```text
+class B show method
+```
+
+---
+
+
+
+##  Interface Inside Class (Implemented Outside Class ✅)
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    interface inter1 {
+
+        void show();
+    }
+}
+
+class B implements A.inter1 {
+
+    public void show() {
+        System.out.println("class B show method");
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        B b = new B();
+        b.show();
+    }
+}
+```
+
+---
+
+##  Output
+
+```text
+class B show method
+```
+
+---
+
+
+##  Static Nested Class with Static Method (Best Usage ✅)
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    static class B {
+
+        public static void show() {
+            System.out.println("class B show method");
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A.B.show(); // direct static method call
+    }
+}
+```
+
+---
+
+##  Output
+
+```text
+class B show method
+```
+
+---
+
+
+
+
+##  Static Nested Class with `main()` + Instance Method
+
+---
+
+### 📦 Code
+
+```java
+class A {
+
+    static class B {
+
+        public static void main(String ar[]) {
+            // empty main
+        }
+
+        public void show() {
+            System.out.println("Giriraj Patidar");
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A.B b = new A.B(); // object creation
+        b.show();
+
+        System.out.println("Main method");
+    }
+}
+```
+
+---
+
+##  Output (Running `demo`)
+
+```text
+Giriraj Patidar
+Main method
+```
+
+---
+
+
+
+##  Nested Interface (Interface inside Interface) ✅
+
+---
+
+### 📦 Code
+
+```java
+interface inter1 {
+
+    void show1();
+
+    interface inter2 {
+
+        void show2();
+    }
+}
+
+class A implements inter1 {
+
+    public void show1() {
+        System.out.println("class A");
+    }
+}
+
+class B implements inter1.inter2 {
+
+    public void show2() {
+        System.out.println("class B");
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        A a = new A();
+        a.show1();
+
+        B b = new B();
+        b.show2();
+    }
+}
+```
+
+---
+
+## ️ Output
+
+```text
+class A
+class B
+```
+
+---
+
+
+##  Class Inside Interface (Nested Class in Interface) 
+
+---
+
+### 📦 Code
+
+```java
+interface inter1 {
+
+    class A {
+
+        public void show() {
+            System.out.println("show method");
+        }
+    }
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        inter1.A a = new inter1.A(); // accessing nested class
+        a.show();
+        a.show();
+    }
+}
+```
+
+---
+
+##  Output
+
+```text
+show method
+show method
+```
+
+---
+
+
+
+##  Class Inside Interface → Always `public static` ✅
+
+---
+
+### 📦 Code
+
+```java
+interface inter1 {
+
+    class A {
+
+        public void show() {
+            System.out.println("show method");
+        }
+    }
+}
+
+class B implements inter1 {
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        B.A a = new B.A(); // accessing nested class
+        a.show();
+    }
+}
+```
+
+---
+
+## ️ Output
+
+```text
+show method
+```
+
+---
+
+
+##  Class Inside Interface → Inheritance (extends) ✅
+
+---
+
+### 📦 Code
+
+```java
+interface inter1 {
+
+    class A {
+
+        public void show() {
+            System.out.println("show method");
+        }
+    }
+}
+
+class B extends inter1.A {
+}
+
+class demo {
+
+    public static void main(String ar[]) {
+
+        B b = new B();
+        b.show();
+    }
+}
+```
+
+---
+
+##  Output
+
+```text
+show method
+```
+
+---
+
